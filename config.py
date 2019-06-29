@@ -4,7 +4,7 @@ class Config:
 
     class GoPro:
         SSID = "GP24660185"
-        SSID_PASS = "epic0298"
+        SSID_PASS = ""
         is_power_off_when_done=False
 
     class GooglePhotos:
@@ -13,4 +13,4 @@ class Config:
 
     class HomeNetwork:
         SSID = "KS"
-        SSID_PASS = "00542274052"
+        SSID_PASS = ""
