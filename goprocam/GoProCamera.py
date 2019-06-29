@@ -3,6 +3,7 @@ import socket
 import urllib.request
 import json
 import re
+import os
 from goprocam import constants
 import datetime
 import struct
@@ -750,7 +751,7 @@ class GoPro:
 					urllib.request.urlretrieve(GPRURL, custom_filename)
 		else:
 			print("Not supported while recording or processing media.")
-	def downloadMedia(self, folder, file, custom_filename=""):
+	def downloadMedia(self, folder, file, custom_filename="", dest_folder="gopro_media"):
 		"""Downloads specific folder and filename"""
 		if self.IsRecording() == 0:
 			print("filename: " + file)
@@ -762,8 +763,8 @@ class GoPro:
 			try:
 				if "FS" in self.infoCamera(constants.Camera.Firmware):
 					if "GFRNT" in folder:
-						urllib.request.urlretrieve("http://" + self.ip_addr + ":8080/videos2/DCIM/" + folder + "/" + file, filename)
-				urllib.request.urlretrieve("http://" + self.ip_addr + ":8080/videos/DCIM/" + folder + "/" + file, filename)
+						urllib.request.urlretrieve("http://" + self.ip_addr + ":8080/videos2/DCIM/" + folder + "/" + file, os.path.join(dest_folder, filename))
+				urllib.request.urlretrieve("http://" + self.ip_addr + ":8080/videos/DCIM/" + folder + "/" + file, os.path.join(dest_folder, filename))
 			except (HTTPError, URLError) as error:
 				print("ERROR: " + str(error))
 		else:
@@ -788,12 +789,11 @@ class GoPro:
 				print("ERROR: " + str(error))
 		else:
 			print("Not supported while recording or processing media.")
-	def downloadAll(self, option=""):
+	def downloadAll(self, option="", dest_folder='gopro_media' ):
 		"""Download all media on camera"""
 		media_stash=[]
 		if option == "":
 			try:
-				folder = ""
 				file = ""
 				raw_data = urllib.request.urlopen('http://' + self.ip_addr + ':8080/gp/gpMediaList').read().decode('utf-8')
 				json_parse = json.loads(raw_data)
@@ -801,7 +801,7 @@ class GoPro:
 					folder=i['d']
 					for i2 in i['fs']:
 						file = i2['n']
-						self.downloadMedia(folder,file, folder+"-"+file)
+						self.downloadMedia(folder,file, folder+"-"+file, dest_folder)
 						media_stash.append(file)
 				return media_stash
 			except (HTTPError, URLError) as error:
@@ -810,7 +810,6 @@ class GoPro:
 				print("HTTP Timeout\nMake sure the connection to the WiFi camera is still active.")
 		if option == "videos":
 			try:
-				folder = ""
 				file = ""
 				raw_data = urllib.request.urlopen('http://' + self.ip_addr + ':8080/gp/gpMediaList').read().decode('utf-8')
 				json_parse = json.loads(raw_data)
@@ -837,7 +836,7 @@ class GoPro:
 					for i2 in i['fs']:
 						file = i2['n']
 						if file.endswith("JPG"):
-							self.downloadMedia(folder,file, folder+"-"+file)
+							self.downloadMedia(folder,file, folder+"-"+file, dest_folder)
 							media_stash.append(file)
 				return media_stash
 			except (HTTPError, URLError) as error:
