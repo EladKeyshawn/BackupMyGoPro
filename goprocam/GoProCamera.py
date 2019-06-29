@@ -789,10 +789,10 @@ class GoPro:
 				print("ERROR: " + str(error))
 		else:
 			print("Not supported while recording or processing media.")
-	def downloadAll(self, option="", dest_folder='gopro_media' ):
+	def downloadAll(self, media_type="*", dest_folder='gopro_media' ):
 		"""Download all media on camera"""
 		media_stash=[]
-		if option == "":
+		if media_type == "*":
 			try:
 				file = ""
 				raw_data = urllib.request.urlopen('http://' + self.ip_addr + ':8080/gp/gpMediaList').read().decode('utf-8')
@@ -808,7 +808,7 @@ class GoPro:
 				print("Error code:" + str(error.code) + "\nMake sure the connection to the WiFi camera is still active.")
 			except timeout:
 				print("HTTP Timeout\nMake sure the connection to the WiFi camera is still active.")
-		if option == "videos":
+		if media_type == "videos":
 			try:
 				file = ""
 				raw_data = urllib.request.urlopen('http://' + self.ip_addr + ':8080/gp/gpMediaList').read().decode('utf-8')
@@ -825,7 +825,7 @@ class GoPro:
 				print("Error code:" + str(error.code) + "\nMake sure the connection to the WiFi camera is still active.")
 			except timeout:
 				print("HTTP Timeout\nMake sure the connection to the WiFi camera is still active.")
-		if option == "photos":
+		if media_type == "photos":
 			try:
 				folder = ""
 				file = ""

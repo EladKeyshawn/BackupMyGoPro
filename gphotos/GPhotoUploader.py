@@ -21,7 +21,7 @@ def parse_args(arg_input=None):
 
 def auth(scopes):
     flow = InstalledAppFlow.from_client_secrets_file(
-        '/Users/eladkeyshawn/Documents/gopro/gphotos/gphoto_credentials.json',
+        '/Users/eladkeyshawn/Documents/BackupMyGoPro/gphotos/gphoto_credentials.json',
         scopes=scopes)
 
     credentials = flow.run_local_server(host='localhost',
@@ -182,7 +182,7 @@ def upload_photos(session, photo_file_list, album_name):
     except KeyError:
         pass
 
-def upload_folder(folder, album='media', auth_file='/Users/eladkeyshawn/Documents/gopro/gphotos/gphoto_credentials.json'):
+def upload_folder(folder, album='media', auth_file='/Users/eladkeyshawn/Documents/BackupMyGoPro/gphotos/gphoto_credentials.json'):
     print(folder)
     photos = [ os.path.join(folder, x) for x in os.listdir(folder)]
     print (photos)
