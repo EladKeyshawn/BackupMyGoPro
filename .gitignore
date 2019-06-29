@@ -1,0 +1,6 @@
+.venv
+.vscode
+gopro_media/*
+_pycache_/
+*DS_Store
+*.pyc
