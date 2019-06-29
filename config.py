@@ -1,5 +1,5 @@
 class Config:
-    MEDIA_DEST_FOLDER = "gopro_media"
+    MEDIA_DEST_FOLDER = "media"
     MEDIA_TYPE = 'photos'  # photos / videos / *
 
     class GoPro:
@@ -9,6 +9,7 @@ class Config:
 
     class GooglePhotos:
         DEST_ALBUM = "gopro"
+        CREDENTIALS_PATH = "gphoto_credentials.json"
 
     class HomeNetwork:
         SSID = "KS"

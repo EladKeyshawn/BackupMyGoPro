@@ -6,22 +6,10 @@ import os.path
 import argparse
 import logging
 
-def parse_args(arg_input=None):
-    parser = argparse.ArgumentParser(description='Upload photos to Google Photos.')
-    parser.add_argument('--auth ', metavar='auth_file', dest='auth_file',
-                    help='file for reading/storing user authentication tokens')
-    parser.add_argument('--album', metavar='album_name', dest='album_name',
-                    help='name of photo album to create (if it doesn\'t exist). Any uploaded photos will be added to this album.')
-    parser.add_argument('--log', metavar='log_file', dest='log_file',
-                    help='name of output file for log messages')
-    parser.add_argument('photos', metavar='photo',type=str, nargs='*',
-                    help='filename of a photo to upload')
-    return parser.parse_args(arg_input)
-
 
 def auth(scopes):
     flow = InstalledAppFlow.from_client_secrets_file(
-        '/Users/eladkeyshawn/Documents/BackupMyGoPro/gphotos/gphoto_credentials.json',
+        '',
         scopes=scopes)
 
     credentials = flow.run_local_server(host='localhost',
@@ -130,7 +118,8 @@ def create_or_retrieve_album(session, album_title):
         return None
 
 def upload_photos(session, photo_file_list, album_name):
-    print("uploding photos...")
+    print("Uploading photos...")
+    
     album_id = create_or_retrieve_album(session, album_name) if album_name else None
 
     # interrupt upload if an upload was requested but could not be created
@@ -148,11 +137,11 @@ def upload_photos(session, photo_file_list, album_name):
             except OSError as err:
                 logging.error("Could not read file \'{0}\' -- {1}".format(photo_file_name, err))
                 continue
-            print(photo_file)
             session.headers["X-Goog-Upload-File-Name"] = os.path.basename(photo_file_name)
 
             logging.info("Uploading photo -- \'{}\'".format(photo_file_name))
-
+            print("Uploading photo -- \'{}\'".format(photo_file_name)) # TODO: fix logging and remove this
+                
             upload_token = session.post('https://photoslibrary.googleapis.com/v1/uploads', photo_bytes)
 
             if (upload_token.status_code == 200) and (upload_token.content):
@@ -182,17 +171,7 @@ def upload_photos(session, photo_file_list, album_name):
     except KeyError:
         pass
 
-def upload_folder(folder, album='media', auth_file='/Users/eladkeyshawn/Documents/BackupMyGoPro/gphotos/gphoto_credentials.json'):
-    print(folder)
+def upload_folder(folder, album='media', auth_file=''):
     photos = [ os.path.join(folder, x) for x in os.listdir(folder)]
-    print (photos)
     session = get_authorized_session(auth_file)
-    print(session)
     upload_photos(session, photos, album)
-
-    # As a quick status check, dump the albums and their key attributes
-
-    print("{:<50} | {:>8} | {} ".format("PHOTO ALBUM","# PHOTOS", "IS WRITEABLE?"))
-
-    for a in getAlbums(session):
-        print("{:<50} | {:>8} | {} ".format(a["title"],a.get("mediaItemsCount", "0"), str(a.get("isWriteable", False))))
